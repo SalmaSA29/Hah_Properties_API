@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace PortalAPI.Models
+{
+    public partial class TprTretention
+    {
+        public int RetentionId { get; set; }
+        public string Name { get; set; }
+        public string Value { get; set; }
+        public string InUser { get; set; }
+        public DateTime? InDate { get; set; }
+        public string ModUser { get; set; }
+        public DateTime? ModDate { get; set; }
+        public string DbId { get; set; }
+    }
+}

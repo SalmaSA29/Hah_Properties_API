@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace PortalAPI.Models
+{
+    public partial class ImportDData
+    {
+        public int RecordId { get; set; }
+        public string TableName { get; set; }
+        public string TableIns { get; set; }
+        public string FieldIns { get; set; }
+        public string TableSource { get; set; }
+        public string FieldSource { get; set; }
+        public string Condition { get; set; }
+        public byte? IsNumber { get; set; }
+    }
+}

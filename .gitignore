@@ -1,0 +1,13 @@
+bin/
+obj/
+.vs/
+Publish/
+Properties/
+PortalAPI.csproj.user
+Properties/
+Properties/PublishProfiles/
+Repository/InformationTechnology/PhysicalCount/PHBrands_Repository.cs
+Properties/PublishProfiles/FolderProfile.pubxml.user
+Controllers/LookupController.cs
+Properties/PublishProfiles/FolderProfile.pubxml.user
+Properties/PublishProfiles/FolderProfile.pubxml.user
