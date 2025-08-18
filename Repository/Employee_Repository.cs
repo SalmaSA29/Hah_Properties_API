@@ -21,7 +21,7 @@ namespace PortalAPI.Repository
             if (db != null)
             {
                 List<SP_TicketingAPI_Employees> x = new List<SP_TicketingAPI_Employees>();
-                x = await db.SP_TicketingAPI_Employees.FromSql("SP_TicketingAPI_Employees").ToListAsync();
+                //x = await db.SP_TicketingAPI_Employees.FromSql("SP_TicketingAPI_Employees").ToListAsync();
                 if (x.Count > 0)
                 {
                     return (new VM_Resault
