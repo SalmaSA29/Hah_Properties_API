@@ -12,7 +12,7 @@ namespace PortalAPI.Models
         public int Id { get; set; }
         public string Hrcode { get; set; }
         public int ProjId { get; set; }
-        public int BuildingId { get; set; }
+        public int BuildingsId { get; set; }
         public int UnitId { get; set; }
         public string Description { get; set; }
         public int PaymentPlanId { get; set; }
@@ -23,7 +23,7 @@ namespace PortalAPI.Models
         public string UpUser { get; set; }
         public DateTime? UpDate { get; set; }
 
-        public virtual Building Building { get; set; }
+        public virtual Buildings Buildings { get; set; }
         public virtual PaymentPlans PaymentPlan { get; set; }
         public virtual Projects Proj { get; set; }
         public virtual Units Unit { get; set; }

@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 //using TicketingAPI.Middleware;
 using PortalAPI.Models.HR;
 using PortalAPI.Models.InformationTechnology;
+using PostAPI.Repository.Residence;
+using PortalAPI.Repository.Residence;
 
 
 namespace PortalAPI
@@ -34,7 +36,9 @@ namespace PortalAPI
             {
                 options.EnableEndpointRouting = false;
             }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
             services.Configure<FormOptions>(o =>  // currently all set to max, configure it to your needs!
             {
                 o.ValueLengthLimit = int.MaxValue;
@@ -48,11 +52,14 @@ namespace PortalAPI
             services.AddDbContext<AISContext>(item => item.UseSqlServer(Configuration.GetConnectionString("BlogDBConnection")));
             services.AddDbContext<HRContext>(item => item.UseSqlServer(Configuration.GetConnectionString("HRDBConnection")));
             services.AddDbContext<InformationTechnologyContext>(item => item.UseSqlServer(Configuration.GetConnectionString("InformationTechnologyDBConnection")));
+            services.AddDbContext<ResidenceContext>(item => item.UseSqlServer(Configuration.GetConnectionString("ResidenceDBConnection")));
 
             services.AddScoped<Items_Interface, Items_Repository>(); 
             services.AddScoped<Account_Interface, Account_Repository>();
             services.AddScoped<Employee_Interface, Employee_Repository>();
-            
+
+            services.AddScoped<Projects_Interface, Projects_Repository>();
+            services.AddScoped<Buildings_Interface, Buildings_Repository>();
 
             services.Configure<IISServerOptions>(options =>
             {
@@ -78,6 +85,8 @@ namespace PortalAPI
                 config.SwaggerDoc("Portal", new OpenApiInfo { Version = "Portal", Title = titleBase + " Portal", Contact = Contact });
 
                 config.SwaggerDoc("ARBim", new OpenApiInfo { Version = "ARBim", Title = titleBase + " ARBim", Contact = Contact });
+
+                config.SwaggerDoc("Residence", new OpenApiInfo { Version = "Residence", Title = titleBase + " Residence", Contact = Contact });
 
                 config.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -174,6 +183,8 @@ namespace PortalAPI
                 c.SwaggerEndpoint("/swagger/Portal/swagger.json", "Portal");
                 c.SwaggerEndpoint("/swagger/Catalog/swagger.json", "Catalog");
                 c.SwaggerEndpoint("/swagger/ARBim/swagger.json", "ARBim");
+
+                c.SwaggerEndpoint("/swagger/Residence/swagger.json", "Residence");
                 c.RoutePrefix = string.Empty;
             });
             app.UseStatusCodePages();
