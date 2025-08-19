@@ -11,6 +11,7 @@ using System.Text.Json.Serialization;
 
 namespace PortalAPI.Models
 {
+    // the model extraction happens FromForm instead of FromBody thus BindNever is important
     public partial class Units
     {
         public Units()

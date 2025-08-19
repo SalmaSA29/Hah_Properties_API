@@ -61,6 +61,7 @@ namespace PortalAPI
             services.AddScoped<Projects_Interface, Projects_Repository>();
             services.AddScoped<Buildings_Interface, Buildings_Repository>();
             services.AddScoped<Units_Interface, Units_Repository>();
+            services.AddScoped<Requests_Interface, Requests_Repository>();
 
             services.Configure<IISServerOptions>(options =>
             {

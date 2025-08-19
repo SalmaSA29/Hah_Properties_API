@@ -1,0 +1,218 @@
+﻿using PortalAPI.Models;
+using PortalAPI.ViewModel;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Ocsp;
+
+namespace PortalAPI.Repository.Residence
+{
+    public class Requests_Repository : Requests_Interface
+    {
+        private readonly ResidenceContext ResidenceContext;
+
+        public Requests_Repository(ResidenceContext context)
+        {
+            ResidenceContext = context;
+        }
+
+        public async Task<VM_Resault> Create(Requests request, string hrCode)
+        {
+            if (!ResidenceContext.Projects.Any(p => p.Id == request.ProjId))
+                return new VM_Resault { message = "Project not found", code = 404, error = true };
+
+            if (!ResidenceContext.Buildings.Any(b => b.Id == request.BuildingsId))
+                return new VM_Resault { message = "Building not found", code = 404, error = true };
+
+            if (!ResidenceContext.Units.Any(u => u.Id == request.UnitId))
+                return new VM_Resault { message = "Unit not found", code = 404, error = true };
+
+            if (!ResidenceContext.PaymentPlans.Any(p => p.Id == request.PaymentPlanId))
+                return new VM_Resault { message = "Payment plan not found", code = 404, error = true };
+
+            // select unit where unit id as per requested and status is pending/progress
+            var requestWithUnitExists = ResidenceContext.Requests
+                .Any
+                (
+                    r => r.UnitId == request.UnitId 
+                    && 
+                    (r.Status == RequestsStatus.Pending || r.Status == RequestsStatus.InProgress)
+                ); 
+
+            if (requestWithUnitExists)
+                return new VM_Resault { message = "Unit already taken", code = 409, error = true }; // Conflict on trying to select same unit
+
+
+            var unitHasPlan = ResidenceContext.UnitPaymentPlan.Any(p => p.UnitId == request.UnitId && p.PaymentPlanId == request.PaymentPlanId);
+
+            if(!unitHasPlan)
+                return new VM_Resault { message = "Unit does not have selected plan", code = 409, error = true }; 
+
+            request.InDate = DateTime.Now;
+            request.Hrcode = hrCode;
+            request.InUser = hrCode;
+            request.Status = RequestsStatus.Pending;    // Over write the value if client sets it up
+
+            var newEntity = (await ResidenceContext.Requests.AddAsync(request)).Entity;
+            await ResidenceContext.SaveChangesAsync();
+
+            return new VM_Resault
+            {
+                message = "Request created successfully",
+                code = 201,
+                error = false,
+                data = new List<object> { newEntity }
+            };
+        }
+
+        public async Task<VM_Resault> Delete(List<int> ids)
+        {
+            var requests = await ResidenceContext.Requests
+                .Where(r => ids.Contains(r.Id))
+                .ToListAsync();
+
+            if (!requests.Any())
+            {
+                return new VM_Resault { message = "No requests found", code = 404, error = true };
+            }
+
+            ResidenceContext.Requests.RemoveRange(requests);
+            await ResidenceContext.SaveChangesAsync();
+
+            return new VM_Resault
+            {
+                message = "Requests deleted successfully",
+                code = 204,
+                error = false
+            };
+        }
+
+        public async Task<VM_Resault> GetAll()
+        {
+            var requests = await ResidenceContext.Requests
+                .Select(r => new
+                {
+                    r.Id,
+                    r.Description,
+                    r.Status,
+                    r.Hrcode,
+                    r.ProjId,
+                    r.BuildingsId,
+                    r.UnitId,
+                    r.PaymentPlanId,
+                    r.SharingUsers
+                })
+                .ToListAsync();
+
+            return new VM_Resault
+            {
+                message = "Success",
+                code = 200,
+                error = false,
+                data = requests.Cast<object>().ToList()
+            };
+        }
+
+        public async Task<VM_Resault> PatchStatus(int id, int status, string hrCode)
+        {
+            var element = ResidenceContext.Requests.FirstOrDefault(r => r.Id == id);
+            if(element == null)
+            {
+                return new VM_Resault
+                {
+                    message = "Request not found",
+                    code = 404,
+                    error = true
+                };
+            }
+
+            element.Status = status;
+            element.UpDate = DateTime.Now;
+            element.UpUser = hrCode;
+
+            await ResidenceContext.SaveChangesAsync();
+
+            return new VM_Resault
+            {
+                message = "Status updated",
+                code = 204,
+                error = true
+            };
+        }
+
+        // Busniess requirment needs this?
+        //public async Task<VM_Resault> Update(int id, Requests requestUpdate, string hrCode)
+        //{
+        //    var request = await ResidenceContext.Requests.FirstOrDefaultAsync(r => r.Id == id);
+        //    if (request == null)
+        //    {
+        //        return new VM_Resault { message = "Request not found", code = 404, error = true };
+        //    }
+
+        //    // Re-check related entities
+        //    if (!ResidenceContext.Projects.Any(p => p.Id == requestUpdate.ProjId))
+        //        return new VM_Resault { message = "Project not found", code = 404, error = true };
+
+        //    if (!ResidenceContext.Buildings.Any(b => b.Id == requestUpdate.BuildingsId))
+        //        return new VM_Resault { message = "Building not found", code = 404, error = true };
+
+        //    if (!ResidenceContext.Units.Any(u => u.Id == requestUpdate.UnitId))
+        //        return new VM_Resault { message = "Unit not found", code = 404, error = true };
+
+        //    if (!ResidenceContext.PaymentPlans.Any(p => p.Id == requestUpdate.PaymentPlanId))
+        //        return new VM_Resault { message = "Payment plan not found", code = 404, error = true };
+
+        //    // Update fields
+        //    request.Hrcode = requestUpdate.Hrcode;
+        //    request.ProjId = requestUpdate.ProjId;
+        //    request.BuildingsId = requestUpdate.BuildingsId;
+        //    request.UnitId = requestUpdate.UnitId;
+        //    request.Description = requestUpdate.Description;
+        //    request.PaymentPlanId = requestUpdate.PaymentPlanId;
+        //    request.SharingUsers = requestUpdate.SharingUsers;
+        //    request.Status = requestUpdate.Status;
+        //    request.UpDate = DateTime.Now;
+        //    request.UpUser = hrCode;
+
+        //    ResidenceContext.Requests.Update(request);
+        //    await ResidenceContext.SaveChangesAsync();
+
+        //    return new VM_Resault
+        //    {
+        //        message = "Request updated successfully",
+        //        code = 200,
+        //        error = false,
+        //        data = new List<object> { request }
+        //    };
+        //}
+
+        public async Task<VM_Resault> GetByUser(string hrCode)
+        {
+            var requests = await ResidenceContext.Requests
+                .Where(r => r.Hrcode == hrCode)
+                .Select(r => new
+                {
+                    r.Id,
+                    r.Description,
+                    r.Status,
+                    r.Hrcode,
+                    r.ProjId,
+                    r.BuildingsId,
+                    r.UnitId,
+                    r.PaymentPlanId,
+                    r.SharingUsers
+                })
+                .ToListAsync();
+
+            return new VM_Resault
+            {
+                message = "Success",
+                code = 200,
+                error = false,
+                data = requests.Cast<object>().ToList()
+            };
+        }
+    }
+}
