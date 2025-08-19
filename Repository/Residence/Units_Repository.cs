@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using PortalAPI.Services;
 
 namespace PostAPI.Repository.Residence
 {
@@ -34,6 +35,26 @@ namespace PostAPI.Repository.Residence
             unit.InUser = hrCode;
 
             var newEntity = (await ResidenceContext.Units.AddAsync(unit)).Entity;
+
+            await ResidenceContext.SaveChangesAsync();
+
+            // Saves the 1:M relation between unit and payment plans
+            foreach (var item in unit.UnitPaymentPlanIds)
+            {
+                if (!ResidenceContext.PaymentPlans.Any(p => p.Id == item))  // Payment plan does not exist
+                {
+                    ResidenceContext.Units.Remove(newEntity);               // roll back the addition
+                    await ResidenceContext.SaveChangesAsync();
+
+                    return new VM_Resault
+                    {
+                        message = "Payment plan not found",
+                        code = 404,
+                        error = true,
+                    };
+                }
+                await ResidenceContext.UnitPaymentPlan.AddAsync(new UnitPaymentPlan() { PaymentPlanId = item, UnitId = newEntity.Id });
+            }
             await ResidenceContext.SaveChangesAsync();
 
             return new VM_Resault
@@ -64,7 +85,24 @@ namespace PostAPI.Repository.Residence
 
         public async Task<VM_Resault> GetAll()
         {
-            var units = await ResidenceContext.Units.ToListAsync();
+            var units = await ResidenceContext.Units
+                .Select(u => new
+                {
+                    u.Id,
+                    u.No,
+                    u.Type,
+                    u.Area,
+                    u.Price,
+                    u.Attach,
+                    PaymentPlans = u.UnitPaymentPlan
+                        .Select(up => new
+                        {
+                            up.PaymentPlan.Id,
+                            up.PaymentPlan.Plan
+                        })
+                        .ToList()
+                })
+                .ToListAsync();
 
             return new VM_Resault
             {
@@ -99,11 +137,14 @@ namespace PostAPI.Repository.Residence
                 };
             }
 
+            Media_Service.DeleteMedia(unit.Attach);
+
             unit.No = unitUpdate.No;
             unit.Type = unitUpdate.Type;
             unit.Area = unitUpdate.Area;
             unit.Price = unitUpdate.Price;
             unit.BuildingsId = unitUpdate.BuildingsId;
+            unit.Attach = unitUpdate.Attach;
             unit.UpDate = DateTime.Now;
             unit.UpUser = hrCode;
 
@@ -122,7 +163,23 @@ namespace PostAPI.Repository.Residence
         public async Task<VM_Resault> GetByBuilding(int buildingId)
         {
             var units = await ResidenceContext.Units
-                .Where(u => u.BuildingsId == buildingId)
+               .Where(u => u.BuildingsId == buildingId)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.No,
+                    u.Type,
+                    u.Area,
+                    u.Price,
+                    u.Attach,
+                    PaymentPlans = u.UnitPaymentPlan
+                        .Select(up => new
+                        {
+                            up.PaymentPlan.Id,
+                            up.PaymentPlan.Plan
+                        })
+                        .ToList()
+                })
                 .ToListAsync();
 
             return new VM_Resault

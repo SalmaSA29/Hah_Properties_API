@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PortalAPI.Models;
+using PortalAPI.Services;
 using PortalAPI.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace PostAPI.Repository.Residence
             await ResidenceContext.SaveChangesAsync();
 
             var result = new VM_Resault();
-            result.message = "Deleted";
+            result.message = "Created";
             result.code = 200;
             result.data = new List<object>() { (object)newEntity };
             result.error = false;
@@ -71,7 +72,6 @@ namespace PostAPI.Repository.Residence
                 result.error = true;
                 return result;
             }
-
             element.UpDate = DateTime.Now;
             element.Name = projectUpdate.Name;
             element.Description = projectUpdate.Description;

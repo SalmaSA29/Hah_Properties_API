@@ -19,10 +19,11 @@ namespace PostAPI.Controllers.Residence
             ProjectRepo = projectRepo;
         }
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create(Projects project)
         {
-            var hrCodeClaim = HttpContext.User.FindFirst("hrCode");
-            var result = await ProjectRepo.Create(project, "hrCodeClaim.Value");
+            var hrCodeClaim = HttpContext.User.FindFirst("user_hrcode");
+            var result = await ProjectRepo.Create(project, hrCodeClaim.Value);
 
             // based on convention preference, this could be CreatedAtRoute method with status code 204
             return StatusCode(result.code, result);
@@ -37,10 +38,11 @@ namespace PostAPI.Controllers.Residence
 
         [HttpPut]
         [Route("{id}")]
+        [Authorize]
         public async Task<IActionResult> Update([FromRoute] int id, Projects project)
         {
             var hrCodeClaim = HttpContext.User.FindFirst("user_hrcode");
-            var result = await ProjectRepo.Update(id, project, "hrCodeClaim.Value");
+            var result = await ProjectRepo.Update(id, project, hrCodeClaim.Value);
             return StatusCode(result.code, result);
         }
 
