@@ -50,7 +50,7 @@ namespace PostAPI.Controllers.Residence
         public async Task<IActionResult> Delete(List<int> ids)
         {
             var result = await ProjectRepo.Delete(ids);
-            return StatusCode(result.code, result);
+            return StatusCode(result.code);
         }
     }
 }
