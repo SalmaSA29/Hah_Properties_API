@@ -69,10 +69,27 @@ namespace PostAPI.Repository.Residence
         public async Task<VM_Resault> Delete(List<int> ids)
         {
             var units = await ResidenceContext.Units
+                .Include(u => u.Requests)
+                .Include(u => u.UnitPaymentPlan)
                 .Where(u => ids.Contains(u.Id))
                 .ToListAsync();
 
-            ResidenceContext.Units.RemoveRange(units);
+            //ResidenceContext.Units.RemoveRange(units);
+
+            foreach (var unit in units)
+            {
+                foreach(var request in unit.Requests)
+                {
+                    request.IsActive = false;
+                }
+                foreach (var plan in unit.UnitPaymentPlan)
+                {
+                    plan.IsActive = false;
+                }
+                Media_Service.DeleteMedia(unit.Attach);
+                unit.IsActive = false;
+            }
+
             await ResidenceContext.SaveChangesAsync();
 
             return new VM_Resault
@@ -86,6 +103,7 @@ namespace PostAPI.Repository.Residence
         public async Task<VM_Resault> GetAll()
         {
             var units = await ResidenceContext.Units
+                .Where(u => u.IsActive == true)
                 .Select(u => new
                 {
                     u.Id,
@@ -94,6 +112,11 @@ namespace PostAPI.Repository.Residence
                     u.Area,
                     u.Price,
                     u.Attach,
+                    Building = new 
+                        {
+                            u.Buildings.Id, 
+                            u.Buildings.Name 
+                        },
                     PaymentPlans = u.UnitPaymentPlan
                         .Select(up => new
                         {
@@ -115,7 +138,7 @@ namespace PostAPI.Repository.Residence
 
         public async Task<VM_Resault> Update(int id, Units unitUpdate, string hrCode)
         {
-            var unit = await ResidenceContext.Units.FirstOrDefaultAsync(u => u.Id == id);
+            var unit = await ResidenceContext.Units.Include(u => u.UnitPaymentPlan).FirstOrDefaultAsync(u => u.Id == id);
             if (unit == null)
             {
                 return new VM_Resault
@@ -148,6 +171,24 @@ namespace PostAPI.Repository.Residence
             unit.UpDate = DateTime.Now;
             unit.UpUser = hrCode;
 
+            foreach(var unitPlan in unit.UnitPaymentPlan)
+            {
+                var toBeDeletedPlanRelations = ResidenceContext.UnitPaymentPlan.Where(up => up.UnitId == unit.Id);
+                foreach(var plan in toBeDeletedPlanRelations)
+                {
+                    ResidenceContext.UnitPaymentPlan.Remove(plan);
+                }
+            }
+
+            unitUpdate.UnitPaymentPlanIds = unitUpdate.UnitPaymentPlanIds
+                .Distinct()
+                .ToArray(); //remove any duplication from request
+
+            foreach(var planId in unitUpdate.UnitPaymentPlanIds)
+            {
+                ResidenceContext.UnitPaymentPlan.Add(new UnitPaymentPlan() { UnitId = unit.Id, PaymentPlanId = planId });
+            }
+
             ResidenceContext.Units.Update(unit);
             await ResidenceContext.SaveChangesAsync();
 
@@ -163,7 +204,7 @@ namespace PostAPI.Repository.Residence
         public async Task<VM_Resault> GetByBuilding(int buildingId)
         {
             var units = await ResidenceContext.Units
-               .Where(u => u.BuildingsId == buildingId)
+               .Where(u => u.BuildingsId == buildingId && u.IsActive == true)
                 .Select(u => new
                 {
                     u.Id,
@@ -188,6 +229,18 @@ namespace PostAPI.Repository.Residence
                 code = 200,
                 error = false,
                 data = units.Cast<object>().ToList()
+            };
+        }
+
+        public async Task<VM_Resault> GetAllPlans()
+        {
+            var data = await ResidenceContext.PaymentPlans.ToListAsync();
+            return new VM_Resault
+            {
+                message = "Success",
+                code = 200,
+                error = false,
+                data = data.Cast<object>().ToList()
             };
         }
     }

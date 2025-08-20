@@ -5,15 +5,18 @@ using System.Threading.Tasks;
 using System;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using PostAPI.Repository.Residence;
 
 namespace PortalAPI.Repository.Residence
 {
     public class Buildings_Repository : Buildings_Interface
     {
         private readonly ResidenceContext ResidenceContext;
-        public Buildings_Repository(ResidenceContext residenceContext)
+        private readonly Units_Interface UnitsRepository;
+        public Buildings_Repository(ResidenceContext residenceContext, Units_Interface unitRepository)
         {
             ResidenceContext = residenceContext;
+            UnitsRepository = unitRepository;
         }
 
         public async Task<VM_Resault> Create(Buildings building, string hrCode)
@@ -46,10 +49,20 @@ namespace PortalAPI.Repository.Residence
         public async Task<VM_Resault> Delete(List<int> ids)
         {
             var range = await ResidenceContext.Buildings
+                .Include(b => b.Units)
                 .Where(b => ids.Contains(b.Id))
                 .ToListAsync();
 
-            ResidenceContext.Buildings.RemoveRange(range);
+            foreach(var building in range)
+            {
+                foreach (var unit in building.Units)
+                {
+                    await UnitsRepository.Delete(new List<int>{ unit.Id });     // deletion now occurs in cycles of dependinces to assure all relations are inActive
+                }
+                building.IsActive = false;
+            }
+
+            //ResidenceContext.Buildings.RemoveRange(range);
             await ResidenceContext.SaveChangesAsync();
 
             return new VM_Resault
@@ -63,6 +76,7 @@ namespace PortalAPI.Repository.Residence
         public async Task<VM_Resault> GetAll()
         {
             var buildings = await ResidenceContext.Buildings
+                .Where(b => b.IsActive == true)
                 .ToListAsync();
 
             return new VM_Resault
@@ -119,7 +133,7 @@ namespace PortalAPI.Repository.Residence
         public async Task<VM_Resault> GetByProject(int projectId)
         {
             var buildings = await ResidenceContext.Buildings
-                .Where(b => b.ProjId == projectId)
+                .Where(b => b.ProjId == projectId && b.IsActive == true)
                 .ToListAsync();
 
             return new VM_Resault

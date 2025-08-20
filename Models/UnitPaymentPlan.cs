@@ -11,6 +11,7 @@ namespace PortalAPI.Models
     {
         public int PaymentPlanId { get; set; }
         public int UnitId { get; set; }
+        public bool? IsActive { get; set; }
 
         public virtual PaymentPlans PaymentPlan { get; set; }
         public virtual Units Unit { get; set; }

@@ -19,7 +19,7 @@ namespace PortalAPI.Models
 
         public int Id { get; set; }
         public string Plan { get; set; }
-
+        public bool? IsActive { get; set; }
         public virtual ICollection<Requests> Requests { get; set; }
         public virtual ICollection<UnitPaymentPlan> UnitPaymentPlan { get; set; }
     }

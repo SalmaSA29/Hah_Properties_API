@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ExcelDataReader.Log.Logger;
+using Microsoft.AspNetCore.Http;
 using PortalAPI.ViewModel;
 using System;
 using System.IO;
@@ -15,6 +16,9 @@ namespace PortalAPI.Services
     {
         public static async Task<string?> SaveMedia(IFormFile file)
         {
+            if (file == null)
+                return null;
+
             if (file.Length == 0)   // file is empty
                 return null;
 

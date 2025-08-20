@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PortalAPI.Models;
+using PortalAPI.Repository.Residence;
 using PortalAPI.Services;
 using PortalAPI.ViewModel;
 using System;
@@ -13,9 +14,11 @@ namespace PostAPI.Repository.Residence
     public class Projects_Repository : Projects_Interface
     {
         private readonly ResidenceContext ResidenceContext;
-        public Projects_Repository(ResidenceContext residenceContext)
+        private readonly Buildings_Interface BuildingRepository;
+        public Projects_Repository(ResidenceContext residenceContext, Buildings_Interface buildingInterface)
         {
             ResidenceContext = residenceContext;
+            BuildingRepository = buildingInterface;
         }
 
         public async Task<VM_Resault> Create(Projects project, string hrCode)
@@ -37,9 +40,21 @@ namespace PostAPI.Repository.Residence
         public async Task<VM_Resault> Delete(List<int> ids)
         {
             
-            var range = await ResidenceContext.Projects.Where(p => ids.Contains(p.Id)).ToListAsync();
+            var range = await ResidenceContext.Projects
+                .Include(p => p.Buildings)
+                .Where(p => ids.Contains(p.Id))
+                .ToListAsync();
 
-            ResidenceContext.RemoveRange(range);
+            foreach(var project in range)
+            {
+                foreach(var building in project.Buildings)
+                {
+                    await BuildingRepository.Delete(new List<int> { building.Id });
+                }
+                project.IsActive = false;
+            }
+
+            // ResidenceContext.RemoveRange(range);
             ResidenceContext.SaveChanges();
 
             var result = new VM_Resault();
@@ -53,7 +68,7 @@ namespace PostAPI.Repository.Residence
         {
             var result = new VM_Resault();
             result.message = "Success";
-            result.data =  (await ResidenceContext.Projects.ToListAsync()).Cast<object>().ToList();
+            result.data =  (await ResidenceContext.Projects.Where(p => p.IsActive == true).ToListAsync()).Cast<object>().ToList();
 
             result.code = 200;
             result.error = false;

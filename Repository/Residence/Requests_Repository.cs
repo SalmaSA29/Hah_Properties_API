@@ -73,12 +73,10 @@ namespace PortalAPI.Repository.Residence
                 .Where(r => ids.Contains(r.Id))
                 .ToListAsync();
 
-            if (!requests.Any())
-            {
-                return new VM_Resault { message = "No requests found", code = 404, error = true };
-            }
-
-            ResidenceContext.Requests.RemoveRange(requests);
+            foreach(var request in requests)
+                request.IsActive = false;
+            
+            //ResidenceContext.Requests.RemoveRange(requests);
             await ResidenceContext.SaveChangesAsync();
 
             return new VM_Resault
@@ -92,6 +90,7 @@ namespace PortalAPI.Repository.Residence
         public async Task<VM_Resault> GetAll()
         {
             var requests = await ResidenceContext.Requests
+                .Where(r => r.IsActive == true)
                 .Select(r => new
                 {
                     r.Id,
@@ -104,6 +103,7 @@ namespace PortalAPI.Repository.Residence
                     r.PaymentPlanId,
                     r.SharingUsers
                 })
+                
                 .ToListAsync();
 
             return new VM_Resault
@@ -191,7 +191,7 @@ namespace PortalAPI.Repository.Residence
         public async Task<VM_Resault> GetByUser(string hrCode)
         {
             var requests = await ResidenceContext.Requests
-                .Where(r => r.Hrcode == hrCode)
+                .Where(r => r.Hrcode == hrCode && r.IsActive == true)
                 .Select(r => new
                 {
                     r.Id,

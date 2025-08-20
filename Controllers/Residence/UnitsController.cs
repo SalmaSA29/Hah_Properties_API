@@ -89,5 +89,13 @@ namespace PortalAPI.Controllers.Residence
             var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
             return File(fileStream, "application/pdf", id);
         }
+
+        [HttpGet]
+        [Route("paymentPlans")]
+        public async Task<IActionResult> GetPlans()
+        {
+            var result = await UnitsRepo.GetAllPlans();
+            return StatusCode(result.code, result);
+        }
     }
 }
