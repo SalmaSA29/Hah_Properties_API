@@ -34,6 +34,7 @@ namespace PortalAPI.Models
         public string Up_User { get; set; }
         [JsonIgnore]
         public DateTime? Up_Date { get; set; }
+         public bool? IsActive { get; set; }
 
         [JsonIgnore]
         public virtual Buildings Buildings { get; set; }

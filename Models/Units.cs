@@ -47,6 +47,8 @@ namespace PortalAPI.Models
         //[JsonIgnore]
         [BindNever]
         public DateTime? Up_Date { get; set; }
+         [BindNever]
+        public bool? IsActive { get; set; }
 
         [JsonIgnore]
         [BindNever]
@@ -55,7 +57,6 @@ namespace PortalAPI.Models
         [BindNever]
         public virtual ICollection<Requests> Requests { get; set; }
         [JsonIgnore]
-        [BindNever]
         public virtual ICollection<UnitPaymentPlan> UnitPaymentPlan { get; set; }
     }
 }

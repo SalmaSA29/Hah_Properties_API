@@ -49,6 +49,10 @@ namespace PortalAPI.Models
                     .HasColumnName("In_User")
                     .IsUnicode(false);
 
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .IsUnicode(false);
@@ -74,6 +78,10 @@ namespace PortalAPI.Models
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
                 entity.Property(e => e.Plan)
                     .IsRequired()
                     .IsUnicode(false);
@@ -95,6 +103,10 @@ namespace PortalAPI.Models
                     .IsRequired()
                     .HasColumnName("In_User")
                     .IsUnicode(false);
+
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -132,6 +144,10 @@ namespace PortalAPI.Models
                     .HasColumnName("In_User")
                     .IsUnicode(false);
 
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
                 entity.Property(e => e.PaymentPlan_ID).HasColumnName("PaymentPlan_ID");
 
                 entity.Property(e => e.Proj_ID).HasColumnName("Proj_ID");
@@ -153,25 +169,25 @@ namespace PortalAPI.Models
                 entity.HasOne(d => d.Buildings)
                     .WithMany(p => p.Requests)
                     .HasForeignKey(d => d.Buildings_ID)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Request_Buildings");
 
                 entity.HasOne(d => d.PaymentPlan)
                     .WithMany(p => p.Requests)
                     .HasForeignKey(d => d.PaymentPlan_ID)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Request_PaymentPlan");
 
                 entity.HasOne(d => d.Proj)
                     .WithMany(p => p.Requests)
                     .HasForeignKey(d => d.Proj_ID)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Request_Project");
 
                 entity.HasOne(d => d.Unit)
                     .WithMany(p => p.Requests)
                     .HasForeignKey(d => d.Unit_ID)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Request_Unit");
             });
 
@@ -186,16 +202,20 @@ namespace PortalAPI.Models
 
                 entity.Property(e => e.Unit_ID).HasColumnName("Unit_ID");
 
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
                 entity.HasOne(d => d.PaymentPlan)
                     .WithMany(p => p.UnitPaymentPlan)
                     .HasForeignKey(d => d.PaymentPlan_ID)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Unit_PaymentPlan_Payment");
 
                 entity.HasOne(d => d.Unit)
                     .WithMany(p => p.UnitPaymentPlan)
                     .HasForeignKey(d => d.Unit_ID)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Unit_PaymentPlan_Unit");
             });
 
@@ -216,6 +236,10 @@ namespace PortalAPI.Models
                     .HasColumnName("In_User")
                     .IsUnicode(false);
 
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
                 entity.Property(e => e.Price).HasColumnType("decimal(15, 2)");
 
                 entity.Property(e => e.Up_Date)
@@ -229,7 +253,7 @@ namespace PortalAPI.Models
                 entity.HasOne(d => d.Buildings)
                     .WithMany(p => p.Units)
                     .HasForeignKey(d => d.Buildings_ID)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Units_Buildings");
             });
 
