@@ -50,7 +50,7 @@ namespace PortalAPI.Controllers.Residence
         {
             var hrCodeClaim = HttpContext.User.FindFirst("user_hrcode");
             var result = await RequestRepo.PatchStatus(id, status, hrCodeClaim.Value);
-            return StatusCode(result.code, result);
+            return StatusCode(result.code);
         }
 
         [HttpDelete]
