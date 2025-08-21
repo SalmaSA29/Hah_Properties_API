@@ -57,7 +57,7 @@ namespace PortalAPI.Repository.Residence
             {
                 foreach (var unit in building.Units)
                 {
-                    await UnitsRepository.Delete(new List<int>{ unit.Id });     // deletion now occurs in cycles of dependinces to assure all relations are inActive
+                    await UnitsRepository.Delete(new List<int>{ unit.ID });     // deletion now occurs in cycles of dependinces to assure all relations are inActive
                 }
                 building.IsActive = false;
             }

@@ -114,7 +114,7 @@ namespace PostAPI.Repository.Residence
                     u.Attach,
                     Building = new 
                         {
-                            u.Buildings.Id, 
+                            u.Buildings.ID, 
                             u.Buildings.Name 
                         },
                     PaymentPlans = u.UnitPaymentPlan
@@ -173,7 +173,7 @@ namespace PostAPI.Repository.Residence
 
             foreach(var unitPlan in unit.UnitPaymentPlan)
             {
-                var toBeDeletedPlanRelations = ResidenceContext.UnitPaymentPlan.Where(up => up.UnitId == unit.Id);
+                var toBeDeletedPlanRelations = ResidenceContext.UnitPaymentPlan.Where(up => up.Unit_ID == unit.ID);
                 foreach(var plan in toBeDeletedPlanRelations)
                 {
                     ResidenceContext.UnitPaymentPlan.Remove(plan);
@@ -186,7 +186,7 @@ namespace PostAPI.Repository.Residence
 
             foreach(var planId in unitUpdate.UnitPaymentPlanIds)
             {
-                ResidenceContext.UnitPaymentPlan.Add(new UnitPaymentPlan() { UnitId = unit.Id, PaymentPlanId = planId });
+                ResidenceContext.UnitPaymentPlan.Add(new UnitPaymentPlan() { Unit_ID = unit.ID, PaymentPlan_ID = planId });
             }
 
             ResidenceContext.Units.Update(unit);

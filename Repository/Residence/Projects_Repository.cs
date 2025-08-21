@@ -49,7 +49,7 @@ namespace PostAPI.Repository.Residence
             {
                 foreach(var building in project.Buildings)
                 {
-                    await BuildingRepository.Delete(new List<int> { building.Id });
+                    await BuildingRepository.Delete(new List<int> { building.ID });
                 }
                 project.IsActive = false;
             }
