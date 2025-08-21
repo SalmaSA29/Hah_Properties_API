@@ -9,8 +9,8 @@ namespace PortalAPI.Models
 {
     public partial class UnitPaymentPlan
     {
-        public int PaymentPlanId { get; set; }
-        public int UnitId { get; set; }
+        public int PaymentPlan_ID { get; set; }
+        public int Unit_ID { get; set; }
 
         public virtual PaymentPlans PaymentPlan { get; set; }
         public virtual Units Unit { get; set; }

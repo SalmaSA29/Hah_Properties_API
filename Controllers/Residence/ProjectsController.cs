@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PortalAPI.Models;
 using PostAPI.Repository.Residence;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PostAPI.Controllers.Residence
@@ -22,8 +24,9 @@ namespace PostAPI.Controllers.Residence
         [Authorize]
         public async Task<IActionResult> Create(Projects project)
         {
-            var hrCodeClaim = HttpContext.User.FindFirst("user_hrcode");
-            var result = await ProjectRepo.Create(project, hrCodeClaim.Value);
+            var HRcode = HttpContext.User.Claims.FirstOrDefault(c => c.Type.ToString().Equals("UserHRCode", StringComparison.InvariantCultureIgnoreCase));
+            string codeHr = HRcode.Value;
+            var result = await ProjectRepo.Create(project, codeHr);
 
             // based on convention preference, this could be CreatedAtRoute method with status code 204
             return StatusCode(result.code, result);
@@ -41,8 +44,9 @@ namespace PostAPI.Controllers.Residence
         [Authorize]
         public async Task<IActionResult> Update([FromRoute] int id, Projects project)
         {
-            var hrCodeClaim = HttpContext.User.FindFirst("user_hrcode");
-            var result = await ProjectRepo.Update(id, project, hrCodeClaim.Value);
+            var HRcode = HttpContext.User.Claims.FirstOrDefault(c => c.Type.ToString().Equals("UserHRCode", StringComparison.InvariantCultureIgnoreCase));
+            string codeHr = HRcode.Value;
+            var result = await ProjectRepo.Update(id, project, codeHr);
             return StatusCode(result.code, result);
         }
 

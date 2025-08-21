@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PortalAPI.Models;
 using PortalAPI.Repository.Residence;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PortalAPI.Controllers.Residence
@@ -23,8 +25,9 @@ namespace PortalAPI.Controllers.Residence
         [Authorize]
         public async Task<IActionResult> Create(Requests request)
         {
-            var hrCodeClaim = HttpContext.User.FindFirst("user_hrcode");
-            var result = await RequestRepo.Create(request, hrCodeClaim.Value);
+            var HRcode = HttpContext.User.Claims.FirstOrDefault(c => c.Type.ToString().Equals("UserHRCode", StringComparison.InvariantCultureIgnoreCase));
+            string codeHr = HRcode.Value;
+            var result = await RequestRepo.Create(request, codeHr);
             return StatusCode(result.code, result);
         }
 
@@ -39,8 +42,9 @@ namespace PortalAPI.Controllers.Residence
         [Authorize]
         public async Task<IActionResult> GetByUser()
         {
-            var hrCodeClaim = HttpContext.User.FindFirst("user_hrcode");
-            var result = await RequestRepo.GetByUser(hrCodeClaim.Value);
+            var HRcode = HttpContext.User.Claims.FirstOrDefault(c => c.Type.ToString().Equals("UserHRCode", StringComparison.InvariantCultureIgnoreCase));
+            string codeHr = HRcode.Value;
+            var result = await RequestRepo.GetByUser(codeHr);
             return StatusCode(result.code, result);
         }
 
@@ -48,8 +52,9 @@ namespace PortalAPI.Controllers.Residence
         [Authorize]
         public async Task<IActionResult> PatchStatus(int id, [FromQuery] int status)
         {
-            var hrCodeClaim = HttpContext.User.FindFirst("user_hrcode");
-            var result = await RequestRepo.PatchStatus(id, status, hrCodeClaim.Value);
+            var HRcode = HttpContext.User.Claims.FirstOrDefault(c => c.Type.ToString().Equals("UserHRCode", StringComparison.InvariantCultureIgnoreCase));
+            string codeHr = HRcode.Value;
+            var result = await RequestRepo.PatchStatus(id, status, codeHr);
             return StatusCode(result.code, result);
         }
 

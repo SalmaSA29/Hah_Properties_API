@@ -6,8 +6,10 @@ using PortalAPI.Models;
 using PortalAPI.Services;
 using PortalAPI.ViewModel;
 using PostAPI.Repository.Residence;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PortalAPI.Controllers.Residence
@@ -30,9 +32,9 @@ namespace PortalAPI.Controllers.Residence
         {
             var mediaId = await Media_Service.SaveMedia(unit.Media);
             unit.Attach = mediaId;
-            var hrcodeClaim = HttpContext.User.FindFirst("user_hrcode");
-
-            var result = await UnitsRepo.Create(unit, hrcodeClaim.Value);
+            var HRcode = HttpContext.User.Claims.FirstOrDefault(c => c.Type.ToString().Equals("UserHRCode", StringComparison.InvariantCultureIgnoreCase));
+            string codeHr = HRcode.Value;
+            var result = await UnitsRepo.Create(unit, codeHr);
             return StatusCode(result.code, result);
         }
 
@@ -57,9 +59,10 @@ namespace PortalAPI.Controllers.Residence
         {
             var mediaId = await Media_Service.SaveMedia(updateUnit.Media);
             updateUnit.Attach = mediaId;
-            var hrcodeClaim = HttpContext.User.FindFirst("user_hrcode");
+            var HRcode = HttpContext.User.Claims.FirstOrDefault(c => c.Type.ToString().Equals("UserHRCode", StringComparison.InvariantCultureIgnoreCase));
+            string codeHr = HRcode.Value;
 
-            var result = await UnitsRepo.Update(id, updateUnit, hrcodeClaim.Value);
+            var result = await UnitsRepo.Update(id, updateUnit, codeHr);
             return StatusCode(result.code, result);
         }
 
@@ -88,6 +91,14 @@ namespace PortalAPI.Controllers.Residence
 
             var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
             return File(fileStream, "application/pdf", id);
+        }
+
+        [HttpGet]
+        [Route("paymentPlans")]
+        public async Task<IActionResult> GetPlans()
+        {
+            var result = await UnitsRepo.GetAllPlans();
+            return StatusCode(result.code, result);
         }
     }
 }

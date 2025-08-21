@@ -18,7 +18,7 @@ namespace PortalAPI.Repository.Residence
 
         public async Task<VM_Resault> Create(Buildings building, string hrCode)
         {
-            if(!ResidenceContext.Projects.Where(p => p.Id == building.ProjId).Any())    //project not found
+            if(!ResidenceContext.Projects.Where(p => p.ID == building.Proj_ID).Any())    //project not found
             {
                 return new VM_Resault
                 {
@@ -28,8 +28,8 @@ namespace PortalAPI.Repository.Residence
                 };
             }
 
-            building.InDate = DateTime.Now;
-            building.InUser = hrCode;
+            building.In_Date = DateTime.Now;
+            building.In_User = hrCode;
 
             var newEntity = (await ResidenceContext.Buildings.AddAsync(building)).Entity;
             await ResidenceContext.SaveChangesAsync();
@@ -46,7 +46,7 @@ namespace PortalAPI.Repository.Residence
         public async Task<VM_Resault> Delete(List<int> ids)
         {
             var range = await ResidenceContext.Buildings
-                .Where(b => ids.Contains(b.Id))
+                .Where(b => ids.Contains(b.ID))
                 .ToListAsync();
 
             ResidenceContext.Buildings.RemoveRange(range);
@@ -76,7 +76,7 @@ namespace PortalAPI.Repository.Residence
 
         public async Task<VM_Resault> Update(int id, Buildings buildingUpdate, string hrCode)
         {
-            if (!ResidenceContext.Projects.Where(p => p.Id == buildingUpdate.ProjId).Any())    //project not found
+            if (!ResidenceContext.Projects.Where(p => p.ID == buildingUpdate.Proj_ID).Any())    //project not found
             {
                 return new VM_Resault
                 {
@@ -87,7 +87,7 @@ namespace PortalAPI.Repository.Residence
             }
 
 
-            var element = await ResidenceContext.Buildings.FirstOrDefaultAsync(b => b.Id == id);
+            var element = await ResidenceContext.Buildings.FirstOrDefaultAsync(b => b.ID == id);
 
             if (element == null)
             {
@@ -100,9 +100,9 @@ namespace PortalAPI.Repository.Residence
             }
 
             element.Name = buildingUpdate.Name;
-            element.UpDate = DateTime.Now;
-            element.UpUser = hrCode;
-            element.ProjId = buildingUpdate.ProjId; // allow project reassignment
+            element.Up_Date = DateTime.Now;
+            element.Up_User = hrCode;
+            element.Proj_ID = buildingUpdate.Proj_ID; // allow project reassignment
 
             ResidenceContext.Buildings.Update(element);
             await ResidenceContext.SaveChangesAsync();
@@ -119,7 +119,7 @@ namespace PortalAPI.Repository.Residence
         public async Task<VM_Resault> GetByProject(int projectId)
         {
             var buildings = await ResidenceContext.Buildings
-                .Where(b => b.ProjId == projectId)
+                .Where(b => b.Proj_ID == projectId)
                 .ToListAsync();
 
             return new VM_Resault

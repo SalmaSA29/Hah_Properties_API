@@ -20,21 +20,20 @@ namespace PortalAPI.Models
         public int Id { get; set; }
         [JsonIgnore]
         public string Hrcode { get; set; }
-        public int ProjId { get; set; }
-        public int BuildingsId { get; set; }
-        public int UnitId { get; set; }
+        public int Proj_ID { get; set; }
+        public int Buildings_ID { get; set; }
+        public int Unit_ID { get; set; }
         public string Description { get; set; }
-        public int PaymentPlanId { get; set; }
-        public string SharingUsers { get; set; }
+        public int PaymentPlan_ID { get; set; }
+        public string Sharing_Users { get; set; }
         public int Status { get; set; }
+        public string In_User { get; set; }
         [JsonIgnore]
-        public string InUser { get; set; }
+        public DateTime In_Date { get; set; }
         [JsonIgnore]
-        public DateTime InDate { get; set; }
+        public string Up_User { get; set; }
         [JsonIgnore]
-        public string UpUser { get; set; }
-        [JsonIgnore]
-        public DateTime? UpDate { get; set; }
+        public DateTime? Up_Date { get; set; }
 
         [JsonIgnore]
         public virtual Buildings Buildings { get; set; }

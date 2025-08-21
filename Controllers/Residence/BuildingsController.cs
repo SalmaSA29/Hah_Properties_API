@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PortalAPI.Models;
 using PortalAPI.Repository.Residence;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PortalAPI.Controllers.Residence
@@ -38,8 +40,9 @@ namespace PortalAPI.Controllers.Residence
         [Authorize]
         public async Task<IActionResult> Create(Buildings building)
         {
-            var hrCodeClaim = HttpContext.User.FindFirst("user_hrcode");
-            var result = await BuildingRepo.Create(building,hrCodeClaim.Value);
+            var HRcode = HttpContext.User.Claims.FirstOrDefault(c => c.Type.ToString().Equals("UserHRCode", StringComparison.InvariantCultureIgnoreCase));
+            string codeHr = HRcode.Value;
+            var result = await BuildingRepo.Create(building, codeHr);
             return StatusCode(result.code, result);
         }
 
@@ -47,8 +50,9 @@ namespace PortalAPI.Controllers.Residence
         [Authorize]
         public async Task<IActionResult> Update(int id, Buildings buildingUpdate)
         {
-            var hrCodeClaim = HttpContext.User.FindFirst("user_hrcode");
-            var result = await BuildingRepo.Update(id, buildingUpdate, hrCodeClaim.Value);
+            var HRcode = HttpContext.User.Claims.FirstOrDefault(c => c.Type.ToString().Equals("UserHRCode", StringComparison.InvariantCultureIgnoreCase));
+            string codeHr = HRcode.Value;
+            var result = await BuildingRepo.Update(id, buildingUpdate, codeHr);
             return StatusCode(result.code, result);
         }
 

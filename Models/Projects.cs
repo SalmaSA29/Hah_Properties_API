@@ -17,17 +17,13 @@ namespace PortalAPI.Models
             Requests = new HashSet<Requests>();
         }
         [JsonIgnore]
-        public int Id { get; set; }
+        public int ID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        [JsonIgnore]
-        public string InUser { get; set; }
-        [JsonIgnore]
-        public DateTime InDate { get; set; }
-        [JsonIgnore]
-        public string UpUser { get; set; }
-        [JsonIgnore]
-        public DateTime? UpDate { get; set; }
+        public string In_User { get; set; }
+        public DateTime In_Date { get; set; }
+        public string Up_User { get; set; }
+        public DateTime? Up_Date { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<Buildings> Buildings { get; set; }

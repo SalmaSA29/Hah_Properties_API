@@ -21,7 +21,7 @@ namespace PostAPI.Repository.Residence
         public async Task<VM_Resault> Create(Units unit, string hrCode)
         {
             // Check if the building exists
-            if (!ResidenceContext.Buildings.Any(b => b.Id == unit.BuildingsId))
+            if (!ResidenceContext.Buildings.Any(b => b.ID == unit.Buildings_ID))
             {
                 return new VM_Resault
                 {
@@ -31,8 +31,8 @@ namespace PostAPI.Repository.Residence
                 };
             }
 
-            unit.InDate = DateTime.Now;
-            unit.InUser = hrCode;
+            unit.In_Date = DateTime.Now;
+            unit.In_User = hrCode;
 
             var newEntity = (await ResidenceContext.Units.AddAsync(unit)).Entity;
 
@@ -53,7 +53,7 @@ namespace PostAPI.Repository.Residence
                         error = true,
                     };
                 }
-                await ResidenceContext.UnitPaymentPlan.AddAsync(new UnitPaymentPlan() { PaymentPlanId = item, UnitId = newEntity.Id });
+                await ResidenceContext.UnitPaymentPlan.AddAsync(new UnitPaymentPlan() { PaymentPlan_ID = item, Unit_ID = newEntity.ID });
             }
             await ResidenceContext.SaveChangesAsync();
 
@@ -69,7 +69,7 @@ namespace PostAPI.Repository.Residence
         public async Task<VM_Resault> Delete(List<int> ids)
         {
             var units = await ResidenceContext.Units
-                .Where(u => ids.Contains(u.Id))
+                .Where(u => ids.Contains(u.ID))
                 .ToListAsync();
 
             ResidenceContext.Units.RemoveRange(units);
@@ -88,7 +88,7 @@ namespace PostAPI.Repository.Residence
             var units = await ResidenceContext.Units
                 .Select(u => new
                 {
-                    u.Id,
+                    u.ID,
                     u.No,
                     u.Type,
                     u.Area,
@@ -115,7 +115,7 @@ namespace PostAPI.Repository.Residence
 
         public async Task<VM_Resault> Update(int id, Units unitUpdate, string hrCode)
         {
-            var unit = await ResidenceContext.Units.FirstOrDefaultAsync(u => u.Id == id);
+            var unit = await ResidenceContext.Units.FirstOrDefaultAsync(u => u.ID == id);
             if (unit == null)
             {
                 return new VM_Resault
@@ -127,7 +127,7 @@ namespace PostAPI.Repository.Residence
             }
 
             // Check if the building exists (allow reassignment)
-            if (!ResidenceContext.Buildings.Any(b => b.Id == unitUpdate.BuildingsId))
+            if (!ResidenceContext.Buildings.Any(b => b.ID == unitUpdate.Buildings_ID))
             {
                 return new VM_Resault
                 {
@@ -143,10 +143,10 @@ namespace PostAPI.Repository.Residence
             unit.Type = unitUpdate.Type;
             unit.Area = unitUpdate.Area;
             unit.Price = unitUpdate.Price;
-            unit.BuildingsId = unitUpdate.BuildingsId;
+            unit.Buildings_ID = unitUpdate.Buildings_ID;
             unit.Attach = unitUpdate.Attach;
-            unit.UpDate = DateTime.Now;
-            unit.UpUser = hrCode;
+            unit.Up_Date = DateTime.Now;
+            unit.Up_User = hrCode;
 
             ResidenceContext.Units.Update(unit);
             await ResidenceContext.SaveChangesAsync();
@@ -163,10 +163,10 @@ namespace PostAPI.Repository.Residence
         public async Task<VM_Resault> GetByBuilding(int buildingId)
         {
             var units = await ResidenceContext.Units
-               .Where(u => u.BuildingsId == buildingId)
+               .Where(u => u.Buildings_ID == buildingId)
                 .Select(u => new
                 {
-                    u.Id,
+                    u.ID,
                     u.No,
                     u.Type,
                     u.Area,
@@ -188,6 +188,18 @@ namespace PostAPI.Repository.Residence
                 code = 200,
                 error = false,
                 data = units.Cast<object>().ToList()
+            };
+        }
+
+        public async Task<VM_Resault> GetAllPlans()
+        {
+            var data = await ResidenceContext.PaymentPlans.ToListAsync();
+            return new VM_Resault
+            {
+                message = "Success",
+                code = 200,
+                error = false,
+                data = data.Cast<object>().ToList()
             };
         }
     }

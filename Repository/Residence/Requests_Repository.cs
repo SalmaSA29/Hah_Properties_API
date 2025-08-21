@@ -20,23 +20,23 @@ namespace PortalAPI.Repository.Residence
 
         public async Task<VM_Resault> Create(Requests request, string hrCode)
         {
-            if (!ResidenceContext.Projects.Any(p => p.Id == request.ProjId))
+            if (!ResidenceContext.Projects.Any(p => p.ID == request.Proj_ID))
                 return new VM_Resault { message = "Project not found", code = 404, error = true };
 
-            if (!ResidenceContext.Buildings.Any(b => b.Id == request.BuildingsId))
+            if (!ResidenceContext.Buildings.Any(b => b.ID == request.Buildings_ID))
                 return new VM_Resault { message = "Building not found", code = 404, error = true };
 
-            if (!ResidenceContext.Units.Any(u => u.Id == request.UnitId))
+            if (!ResidenceContext.Units.Any(u => u.ID == request.Unit_ID))
                 return new VM_Resault { message = "Unit not found", code = 404, error = true };
 
-            if (!ResidenceContext.PaymentPlans.Any(p => p.Id == request.PaymentPlanId))
+            if (!ResidenceContext.PaymentPlans.Any(p => p.Id == request.PaymentPlan_ID))
                 return new VM_Resault { message = "Payment plan not found", code = 404, error = true };
 
             // select unit where unit id as per requested and status is pending/progress
             var requestWithUnitExists = ResidenceContext.Requests
                 .Any
                 (
-                    r => r.UnitId == request.UnitId 
+                    r => r.Unit_ID == request.Unit_ID 
                     && 
                     (r.Status == RequestsStatus.Pending || r.Status == RequestsStatus.InProgress)
                 ); 
@@ -45,14 +45,14 @@ namespace PortalAPI.Repository.Residence
                 return new VM_Resault { message = "Unit already taken", code = 409, error = true }; // Conflict on trying to select same unit
 
 
-            var unitHasPlan = ResidenceContext.UnitPaymentPlan.Any(p => p.UnitId == request.UnitId && p.PaymentPlanId == request.PaymentPlanId);
+            var unitHasPlan = ResidenceContext.UnitPaymentPlan.Any(p => p.Unit_ID == request.Unit_ID && p.PaymentPlan_ID == request.PaymentPlan_ID);
 
             if(!unitHasPlan)
                 return new VM_Resault { message = "Unit does not have selected plan", code = 409, error = true }; 
 
-            request.InDate = DateTime.Now;
+            request.In_Date = DateTime.Now;
             request.Hrcode = hrCode;
-            request.InUser = hrCode;
+            request.In_User = hrCode;
             request.Status = RequestsStatus.Pending;    // Over write the value if client sets it up
 
             var newEntity = (await ResidenceContext.Requests.AddAsync(request)).Entity;
@@ -98,11 +98,11 @@ namespace PortalAPI.Repository.Residence
                     r.Description,
                     r.Status,
                     r.Hrcode,
-                    r.ProjId,
-                    r.BuildingsId,
-                    r.UnitId,
-                    r.PaymentPlanId,
-                    r.SharingUsers
+                    r.Proj_ID,
+                    r.Buildings_ID,
+                    r.Unit_ID,
+                    r.PaymentPlan_ID,
+                    r.Sharing_Users
                 })
                 .ToListAsync();
 
@@ -129,8 +129,8 @@ namespace PortalAPI.Repository.Residence
             }
 
             element.Status = status;
-            element.UpDate = DateTime.Now;
-            element.UpUser = hrCode;
+            element.Up_Date = DateTime.Now;
+            element.Up_User = hrCode;
 
             await ResidenceContext.SaveChangesAsync();
 
@@ -198,11 +198,11 @@ namespace PortalAPI.Repository.Residence
                     r.Description,
                     r.Status,
                     r.Hrcode,
-                    r.ProjId,
-                    r.BuildingsId,
-                    r.UnitId,
-                    r.PaymentPlanId,
-                    r.SharingUsers
+                    r.Proj_ID,
+                    r.Buildings_ID,
+                    r.Unit_ID,
+                    r.PaymentPlan_ID,
+                    r.Sharing_Users
                 })
                 .ToListAsync();
 

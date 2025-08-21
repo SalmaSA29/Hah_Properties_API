@@ -20,8 +20,8 @@ namespace PostAPI.Repository.Residence
 
         public async Task<VM_Resault> Create(Projects project, string hrCode)
         {
-            project.InDate = DateTime.Now;
-            project.InUser = hrCode;
+            project.In_Date = DateTime.Now;
+            project.In_User = hrCode;
             var newEntity = (await ResidenceContext.Projects.AddAsync(project)).Entity;
             await ResidenceContext.SaveChangesAsync();
 
@@ -37,7 +37,7 @@ namespace PostAPI.Repository.Residence
         public async Task<VM_Resault> Delete(List<int> ids)
         {
             
-            var range = await ResidenceContext.Projects.Where(p => ids.Contains(p.Id)).ToListAsync();
+            var range = await ResidenceContext.Projects.Where(p => ids.Contains(p.ID)).ToListAsync();
 
             ResidenceContext.RemoveRange(range);
             ResidenceContext.SaveChanges();
@@ -63,7 +63,7 @@ namespace PostAPI.Repository.Residence
         public async Task<VM_Resault> Update(int id, Projects projectUpdate, string hrCode)
         {
             var result = new VM_Resault();
-            var element = await ResidenceContext.Projects.FirstOrDefaultAsync(p => p.Id == id);
+            var element = await ResidenceContext.Projects.FirstOrDefaultAsync(p => p.ID == id);
 
             if (element == null)
             {
@@ -72,10 +72,10 @@ namespace PostAPI.Repository.Residence
                 result.error = true;
                 return result;
             }
-            element.UpDate = DateTime.Now;
+            element.Up_Date = DateTime.Now;
             element.Name = projectUpdate.Name;
             element.Description = projectUpdate.Description;
-            element.UpUser = hrCode;
+            element.Up_User = hrCode;
 
             ResidenceContext.Projects.Update(element);
             await ResidenceContext.SaveChangesAsync();

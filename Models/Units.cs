@@ -21,31 +21,32 @@ namespace PortalAPI.Models
         }
         [JsonIgnore]
         [BindNever]
-        public int Id { get; set; }
+        public int ID { get; set; }
         public int No { get; set; }
         public int Type { get; set; }
         public int Area { get; set; }
         public decimal Price { get; set; }
         public string Attach { get; set; }
-        public int BuildingsId { get; set; }
+        public int Buildings_ID { get; set; }
 
         [NotMapped]
         public IFormFile Media { get; set; } = null;
         [NotMapped]
+        [JsonIgnore]
         public ICollection<int> UnitPaymentPlanIds { get; set; }    // Used to avoid making another DTO, in the request it is used to get the possible payment plans
         
-        [JsonIgnore]
+        //[JsonIgnore]
         [BindNever]
-        public string InUser { get; set; }
-        [JsonIgnore]
+        public string In_User { get; set; }
+        //[JsonIgnore]
         [BindNever]
-        public DateTime InDate { get; set; }
-        [JsonIgnore]
+        public DateTime In_Date { get; set; }
+        //[JsonIgnore]
         [BindNever]
-        public string UpUser { get; set; }
-        [JsonIgnore]
+        public string Up_User { get; set; }
+        //[JsonIgnore]
         [BindNever]
-        public DateTime? UpDate { get; set; }
+        public DateTime? Up_Date { get; set; }
 
         [JsonIgnore]
         [BindNever]
