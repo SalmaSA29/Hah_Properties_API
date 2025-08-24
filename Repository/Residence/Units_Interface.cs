@@ -13,5 +13,6 @@ namespace PostAPI.Repository.Residence
         public Task<VM_Resault> Update(int id, Units unitUpdate, string hrCode);
         public Task<VM_Resault> GetByBuilding(int buildingId);
         public Task<VM_Resault> GetAllPlans();
+        public Task<VM_Resault> GetAvilableUnits(int id);
     }
 }

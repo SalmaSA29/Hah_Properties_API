@@ -243,5 +243,45 @@ namespace PostAPI.Repository.Residence
                 data = data.Cast<object>().ToList()
             };
         }
+
+        public async Task<VM_Resault> GetAvilableUnits(int buildingId)
+        {
+            var units = await ResidenceContext.Units
+                .Include(u => u.Requests)
+                .Where(u => u.IsActive == true && u.BuildingsId == buildingId)
+                .Where(u =>
+                    !u.Requests.Any() ||
+                    u.Requests.All(r => r.Status == 3))
+                .Select(u => new
+                {
+                    u.Id,
+                    u.No,
+                    u.Type,
+                    u.Area,
+                    u.Price,
+                    u.Attach,
+                    Building = new
+                    {
+                        u.Buildings.Id,
+                        u.Buildings.Name
+                    },
+                    PaymentPlans = u.UnitPaymentPlan
+                        .Select(up => new
+                        {
+                            up.PaymentPlan.Id,
+                            up.PaymentPlan.Plan
+                        })
+                        .ToList()
+                })
+                .ToListAsync();
+
+            return new VM_Resault
+            {
+                message = "Success",
+                code = 200,
+                error = false,
+                data = units.Cast<object>().ToList()
+            };
+        }
     }
 }

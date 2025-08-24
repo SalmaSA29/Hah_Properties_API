@@ -97,5 +97,13 @@ namespace PortalAPI.Controllers.Residence
             var result = await UnitsRepo.GetAllPlans();
             return StatusCode(result.code, result);
         }
+
+        [HttpGet]
+        [Route("avilable/building/{id}")]
+        public async Task<IActionResult> GetAvilableUnits(int id)
+        {
+            var result = await UnitsRepo.GetAvilableUnits(id);
+            return StatusCode(result.code, result);
+        }
     }
 }
