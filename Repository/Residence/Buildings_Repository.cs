@@ -35,14 +35,26 @@ namespace PortalAPI.Repository.Residence
             building.InUser = hrCode;
 
             var newEntity = (await ResidenceContext.Buildings.AddAsync(building)).Entity;
+
             await ResidenceContext.SaveChangesAsync();
+
+            var newBuilding = ResidenceContext.Buildings
+            .Include(b => b.Units)
+            .Where(b => b.IsActive == true && b.Id == newEntity.Id)
+            .Select(b => new
+            {
+                b.Id,
+                b.Name,
+                projectId = b.ProjId,
+                projectName = b.Proj.Name
+            });
 
             return new VM_Resault
             {
                 message = "Building created successfully",
                 code = 201,
                 error = false,
-                data = new List<object> { newEntity }
+                data = new List<object> { newBuilding }
             };
         }
 
@@ -76,7 +88,15 @@ namespace PortalAPI.Repository.Residence
         public async Task<VM_Resault> GetAll()
         {
             var buildings = await ResidenceContext.Buildings
+                .Include(b => b.Units)
                 .Where(b => b.IsActive == true)
+                .Select(b => new
+                {
+                    b.Id,
+                    b.Name,
+                    projectId = b.ProjId,
+                    projectName = b.Proj.Name
+                })
                 .ToListAsync();
 
             return new VM_Resault
@@ -121,19 +141,37 @@ namespace PortalAPI.Repository.Residence
             ResidenceContext.Buildings.Update(element);
             await ResidenceContext.SaveChangesAsync();
 
+            var updatedBuilding = ResidenceContext.Buildings
+            .Include(b => b.Units)
+            .Where(b => b.IsActive == true && b.Id == id)
+            .Select(b => new
+            {
+                b.Id,
+                b.Name,
+                projectId = b.ProjId,
+                projectName = b.Proj.Name
+            });
+
             return new VM_Resault
             {
                 message = "Building updated successfully",
                 code = 200,
                 error = false,
-                data = new List<object> { element }
+                data = new List<object> { updatedBuilding }
             };
         }
 
         public async Task<VM_Resault> GetByProject(int projectId)
         {
             var buildings = await ResidenceContext.Buildings
-                .Where(b => b.ProjId == projectId && b.IsActive == true)
+                .Include(b => b.Units)
+                .Where(b => b.IsActive == true && b.ProjId == projectId)
+                .Select(b => new
+                {
+                    b.Id,
+                    b.Name,
+                    projectName = b.Proj.Name
+                })
                 .ToListAsync();
 
             return new VM_Resault
