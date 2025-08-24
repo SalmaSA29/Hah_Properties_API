@@ -55,7 +55,7 @@ namespace PortalAPI.Controllers.Residence
             var HRcode = HttpContext.User.Claims.FirstOrDefault(c => c.Type.ToString().Equals("UserHRCode", StringComparison.InvariantCultureIgnoreCase));
             string codeHr = HRcode.Value;
             var result = await RequestRepo.PatchStatus(id, status, codeHr);
-            return StatusCode(result.code, result);
+            return StatusCode(result.code);
         }
 
         [HttpDelete]
