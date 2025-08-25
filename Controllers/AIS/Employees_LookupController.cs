@@ -8,11 +8,11 @@ namespace PortalAPI.Controllers.AIS
     [ApiExplorerSettings(GroupName = "AIS")]
     [Route("api/[controller]")]
     [ApiController] 
-    public class EmployeesController : ControllerBase
+    public class Employees_LookupController : ControllerBase
     {
-        private Employees_Interface EmployeesRepo { get; set; }
+        private Employees_Lookup_Interface EmployeesRepo { get; set; }
 
-        public EmployeesController(Employees_Interface repo)
+        public Employees_LookupController(Employees_Lookup_Interface repo)
         {
             EmployeesRepo = repo;
         }

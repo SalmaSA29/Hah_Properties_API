@@ -18,6 +18,7 @@ using PortalAPI.Models.HR;
 using PortalAPI.Models.InformationTechnology;
 using PostAPI.Repository.Residence;
 using PortalAPI.Repository.Residence;
+using PortalAPI.Repository.AIS;
 
 
 namespace PortalAPI
@@ -57,13 +58,13 @@ namespace PortalAPI
             services.AddScoped<Items_Interface, Items_Repository>(); 
             services.AddScoped<Account_Interface, Account_Repository>();
             services.AddScoped<Employee_Interface, Employee_Repository>();
+            services.AddScoped<Employees_Lookup_Interface,Employees_Lookup_Repository >();
 
             services.AddScoped<Projects_Interface, Projects_Repository>();
             services.AddScoped<Buildings_Interface, Buildings_Repository>();
             services.AddScoped<Units_Interface, Units_Repository>();
             services.AddScoped<Requests_Interface, Requests_Repository>();
 
-            services.AddScoped<Employee_Interface, Employee_Repository>();
 
             services.Configure<IISServerOptions>(options =>
             {

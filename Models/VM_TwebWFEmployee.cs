@@ -1,7 +1,10 @@
-﻿namespace PortalAPI.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PortalAPI.Models
 {
     public partial class VM_TwebWFEmployee
     {
+        [Key]
         public string UserHrCode { get; set; }
         public string DepartmentId { get; set; }
         public int? MainDepartmentID { get; set; }

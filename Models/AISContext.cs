@@ -12,7 +12,7 @@ namespace PortalAPI.Models
         }
         //public virtual DbSet<TWEBWF_Projects> TWEBWF_Projects { get; set; }
         //public virtual DbSet<VM_Stage> VM_Stage { get; set; }
-        public virtual DbSet<VM_TwebWFEmployee> Employees { get; set; }
+        //public virtual DbSet<VM_TwebWFEmployee> VM_TwebWFEmployee { get; set; }
         public virtual DbSet<V_Notification> V_Notification { get; set; }
         public virtual DbSet<V_GetNextStepUsers> V_GetNextStepUsers { get; set; }
         public virtual DbSet<SP_TicketingAPI_Employees> SP_TicketingAPI_Employees { get; set; }
