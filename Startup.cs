@@ -63,6 +63,8 @@ namespace PortalAPI
             services.AddScoped<Units_Interface, Units_Repository>();
             services.AddScoped<Requests_Interface, Requests_Repository>();
 
+            services.AddScoped<Employee_Interface, Employee_Repository>();
+
             services.Configure<IISServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;
@@ -89,6 +91,8 @@ namespace PortalAPI
                 config.SwaggerDoc("ARBim", new OpenApiInfo { Version = "ARBim", Title = titleBase + " ARBim", Contact = Contact });
 
                 config.SwaggerDoc("Residence", new OpenApiInfo { Version = "Residence", Title = titleBase + " Residence", Contact = Contact });
+                config.SwaggerDoc("AIS", new OpenApiInfo { Version = "AIS", Title = titleBase + " AIS", Contact = Contact });
+
 
                 config.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -187,6 +191,7 @@ namespace PortalAPI
                 c.SwaggerEndpoint("/swagger/ARBim/swagger.json", "ARBim");
 
                 c.SwaggerEndpoint("/swagger/Residence/swagger.json", "Residence");
+                c.SwaggerEndpoint("/swagger/AIS/swagger.json", "AIS");
                 c.RoutePrefix = string.Empty;
             });
             app.UseStatusCodePages();
