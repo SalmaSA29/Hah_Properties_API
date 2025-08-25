@@ -57,12 +57,37 @@ namespace PostAPI.Repository.Residence
             }
             await ResidenceContext.SaveChangesAsync();
 
+            var newUnit = await ResidenceContext.Units
+                .Where(u => u.IsActive == true && u.Id == newEntity.Id)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.No,
+                    u.Type,
+                    u.Area,
+                    u.Price,
+                    u.Attach,
+                    Building = new
+                    {
+                        u.Buildings.Id,
+                        u.Buildings.Name
+                    },
+                    PaymentPlans = u.UnitPaymentPlan
+                        .Select(up => new
+                        {
+                            up.PaymentPlan.Id,
+                            up.PaymentPlan.Plan
+                        })
+                        .ToList()
+                })
+                .ToListAsync();
+
             return new VM_Resault
             {
                 message = "Unit created successfully",
                 code = 201,
                 error = false,
-                data = new List<object> { newEntity }
+                data = new List<object> { newUnit }
             };
         }
 
@@ -192,12 +217,38 @@ namespace PostAPI.Repository.Residence
             ResidenceContext.Units.Update(unit);
             await ResidenceContext.SaveChangesAsync();
 
+            var updatedUnit = await ResidenceContext.Units
+                .Where(u => u.IsActive == true && u.Id == unit.Id)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.No,
+                    u.Type,
+                    u.Area,
+                    u.Price,
+                    u.Attach,
+                    Building = new
+                    {
+                        u.Buildings.Id,
+                        u.Buildings.Name
+                    },
+                    PaymentPlans = u.UnitPaymentPlan
+                        .Select(up => new
+                        {
+                            up.PaymentPlan.Id,
+                            up.PaymentPlan.Plan
+                        })
+                        .ToList()
+                })
+                .ToListAsync();
+
+
             return new VM_Resault
             {
                 message = "Unit updated successfully",
                 code = 200,
                 error = false,
-                data = new List<object> { unit }
+                data = new List<object> { updatedUnit }
             };
         }
 
