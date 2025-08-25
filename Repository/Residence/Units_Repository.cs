@@ -248,13 +248,13 @@ namespace PostAPI.Repository.Residence
         {
             var units = await ResidenceContext.Units
                 .Include(u => u.Requests)
-                .Where(u => u.IsActive == true && u.BuildingsId == buildingId)
+                .Where(u => u.IsActive == true && u.Buildings_ID == buildingId)
                 .Where(u =>
                     !u.Requests.Any() ||
                     u.Requests.All(r => r.Status == 3))
                 .Select(u => new
                 {
-                    u.Id,
+                    u.ID,
                     u.No,
                     u.Type,
                     u.Area,
@@ -262,7 +262,7 @@ namespace PostAPI.Repository.Residence
                     u.Attach,
                     Building = new
                     {
-                        u.Buildings.Id,
+                        u.Buildings.ID,
                         u.Buildings.Name
                     },
                     PaymentPlans = u.UnitPaymentPlan

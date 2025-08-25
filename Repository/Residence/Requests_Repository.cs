@@ -104,10 +104,10 @@ namespace PortalAPI.Repository.Residence
                     ProjName = r.Proj.Name,
                     r.Buildings_ID,
                     BuildingName = r.Buildings.Name,
-                    r.UnitId,
+                    r.Unit_ID,
                     UnitNo = r.Unit.No,
-                    r.PaymentPlanId,
-                    r.SharingUsers
+                    r.PaymentPlan_ID,
+                    r.Sharing_Users
                 })
                 
                 .ToListAsync();
@@ -211,10 +211,10 @@ namespace PortalAPI.Repository.Residence
                     ProjName = r.Proj.Name,
                     r.Buildings_ID,
                     BuildingName = r.Buildings.Name,
-                    r.UnitId,
+                    r.Unit_ID,
                     UnitNo = r.Unit.No,
-                    r.PaymentPlanId,
-                    r.SharingUsers
+                    r.PaymentPlan_ID,
+                    r.Sharing_Users
                 })
 
                 .ToListAsync();

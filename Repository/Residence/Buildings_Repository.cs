@@ -40,12 +40,12 @@ namespace PortalAPI.Repository.Residence
 
             var newBuilding = ResidenceContext.Buildings
             .Include(b => b.Units)
-            .Where(b => b.IsActive == true && b.Id == newEntity.Id)
+            .Where(b => b.IsActive == true && b.ID == newEntity.ID)
             .Select(b => new
             {
-                b.Id,
+                b.ID,
                 b.Name,
-                projectId = b.ProjId,
+                projectId = b.Proj_ID,
                 projectName = b.Proj.Name
             });
 
@@ -92,9 +92,9 @@ namespace PortalAPI.Repository.Residence
                 .Where(b => b.IsActive == true)
                 .Select(b => new
                 {
-                    b.Id,
+                    b.ID,
                     b.Name,
-                    projectId = b.ProjId,
+                    projectId = b.Proj_ID,
                     projectName = b.Proj.Name
                 })
                 .ToListAsync();
@@ -143,12 +143,12 @@ namespace PortalAPI.Repository.Residence
 
             var updatedBuilding = ResidenceContext.Buildings
             .Include(b => b.Units)
-            .Where(b => b.IsActive == true && b.Id == id)
+            .Where(b => b.IsActive == true && b.ID == id)
             .Select(b => new
             {
-                b.Id,
+                b.ID,
                 b.Name,
-                projectId = b.ProjId,
+                projectId = b.Proj_ID,
                 projectName = b.Proj.Name
             });
 
@@ -168,7 +168,7 @@ namespace PortalAPI.Repository.Residence
                 .Where(b => b.IsActive == true && b.Proj_ID == projectId)
                 .Select(b => new
                 {
-                    b.Id,
+                    b.ID,
                     b.Name,
                     projectName = b.Proj.Name
                 })
