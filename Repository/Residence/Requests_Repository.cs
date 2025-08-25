@@ -91,6 +91,9 @@ namespace PortalAPI.Repository.Residence
         {
             var requests = await ResidenceContext.Requests
                 .Where(r => r.IsActive == true)
+                .Include(r => r.Proj)
+                .Include(r => r.Buildings)
+                .Include(r => r.Unit)
                 .Select(r => new
                 {
                     r.Id,
@@ -98,10 +101,13 @@ namespace PortalAPI.Repository.Residence
                     r.Status,
                     r.Hrcode,
                     r.Proj_ID,
+                    ProjName = r.Proj.Name,
                     r.Buildings_ID,
-                    r.Unit_ID,
-                    r.PaymentPlan_ID,
-                    r.Sharing_Users
+                    BuildingName = r.Buildings.Name,
+                    r.UnitId,
+                    UnitNo = r.Unit.No,
+                    r.PaymentPlanId,
+                    r.SharingUsers
                 })
                 
                 .ToListAsync();
@@ -192,6 +198,9 @@ namespace PortalAPI.Repository.Residence
         {
             var requests = await ResidenceContext.Requests
                 .Where(r => r.Hrcode == hrCode && r.IsActive == true)
+                .Include(r => r.Proj)
+                .Include(r => r.Buildings)
+                .Include(r => r.Unit)
                 .Select(r => new
                 {
                     r.Id,
@@ -199,11 +208,15 @@ namespace PortalAPI.Repository.Residence
                     r.Status,
                     r.Hrcode,
                     r.Proj_ID,
+                    ProjName = r.Proj.Name,
                     r.Buildings_ID,
-                    r.Unit_ID,
-                    r.PaymentPlan_ID,
-                    r.Sharing_Users
+                    BuildingName = r.Buildings.Name,
+                    r.UnitId,
+                    UnitNo = r.Unit.No,
+                    r.PaymentPlanId,
+                    r.SharingUsers
                 })
+
                 .ToListAsync();
 
             return new VM_Resault
