@@ -94,6 +94,7 @@ namespace PortalAPI.Repository.Residence
                 .Include(r => r.Proj)
                 .Include(r => r.Buildings)
                 .Include(r => r.Unit)
+                .Include(r => r.PaymentPlan)
                 .Select(r => new
                 {
                     r.Id,
@@ -107,6 +108,7 @@ namespace PortalAPI.Repository.Residence
                     r.Unit_ID,
                     UnitNo = r.Unit.No,
                     r.PaymentPlan_ID,
+                    paymentPlan = r.PaymentPlan.Plan,
                     r.Sharing_Users
                 })
                 
@@ -197,10 +199,11 @@ namespace PortalAPI.Repository.Residence
         public async Task<VM_Resault> GetByUser(string hrCode)
         {
             var requests = await ResidenceContext.Requests
-                .Where(r => r.Hrcode == hrCode && r.IsActive == true)
+                .Where(r => r.IsActive == true && r.Hrcode == hrCode)
                 .Include(r => r.Proj)
                 .Include(r => r.Buildings)
                 .Include(r => r.Unit)
+                .Include(r => r.PaymentPlan)
                 .Select(r => new
                 {
                     r.Id,
@@ -214,6 +217,7 @@ namespace PortalAPI.Repository.Residence
                     r.Unit_ID,
                     UnitNo = r.Unit.No,
                     r.PaymentPlan_ID,
+                    paymentPlan = r.PaymentPlan.Plan,
                     r.Sharing_Users
                 })
 

@@ -58,10 +58,10 @@ namespace PostAPI.Repository.Residence
             await ResidenceContext.SaveChangesAsync();
 
             var newUnit = await ResidenceContext.Units
-                .Where(u => u.IsActive == true && u.Id == newEntity.Id)
+                .Where(u => u.IsActive == true && u.ID == newEntity.ID)
                 .Select(u => new
                 {
-                    u.Id,
+                    u.ID,
                     u.No,
                     u.Type,
                     u.Area,
@@ -69,7 +69,7 @@ namespace PostAPI.Repository.Residence
                     u.Attach,
                     Building = new
                     {
-                        u.Buildings.Id,
+                        u.Buildings.ID,
                         u.Buildings.Name
                     },
                     PaymentPlans = u.UnitPaymentPlan
@@ -218,10 +218,10 @@ namespace PostAPI.Repository.Residence
             await ResidenceContext.SaveChangesAsync();
 
             var updatedUnit = await ResidenceContext.Units
-                .Where(u => u.IsActive == true && u.Id == unit.Id)
+                .Where(u => u.IsActive == true && u.ID == unit.ID)
                 .Select(u => new
                 {
-                    u.Id,
+                    u.ID,
                     u.No,
                     u.Type,
                     u.Area,
@@ -229,7 +229,7 @@ namespace PostAPI.Repository.Residence
                     u.Attach,
                     Building = new
                     {
-                        u.Buildings.Id,
+                        u.Buildings.ID,
                         u.Buildings.Name
                     },
                     PaymentPlans = u.UnitPaymentPlan
