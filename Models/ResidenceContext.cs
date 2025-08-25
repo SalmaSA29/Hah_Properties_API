@@ -30,7 +30,7 @@ namespace PortalAPI.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=Residence;Integrated Security=True");
+                //optionsBuilder.UseSqlServer("HAH34HQ;Database=AIS;UID=sa;PWD=HahDev@2024!");
             }
         }
 
